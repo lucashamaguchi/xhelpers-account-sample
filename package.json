@@ -23,7 +23,7 @@
     "reflect-metadata": "^0.1.13",
     "shortid": "^2.2.15",
     "typescript": "^3.8.3",
-    "xhelpers-api": "^2.1.6"
+    "xhelpers-api": "^2.1.10"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.29",
