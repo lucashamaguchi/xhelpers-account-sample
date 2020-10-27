@@ -66,7 +66,7 @@ export default class AccountService extends BaseService<IAccount> {
     user.completedSignUp = await this.userService.getCompletedSignUp(user);
     const { password, ...userObj } = { ...user };
     return userObj as IAccount;
-}
+  }
 
   async confirmEmail(payload: any) {
     const actionToken: any = await this.repositoryActionToken.findOne({
