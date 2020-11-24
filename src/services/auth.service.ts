@@ -62,7 +62,7 @@ export default class AuthService extends BaseService<IAccount> {
 
     const token = await this.getJwtToken(userRest);
     return {
-      url: `${process.env.FRONT_URL}/auth?token=${token}`,
+      url: `${process.env.FRONT_URL}/sso/callback/auth?token=${token}`,
     };
   }
 
