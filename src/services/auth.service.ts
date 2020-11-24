@@ -49,11 +49,15 @@ export default class AuthService extends BaseService<IAccount> {
       await this.create(null, {
         ...payload,
         metadata: payload.meta,
+        emailConfirmed: true
       });
       user = await User.findOne(filter);
     } else {
       if (user.userType !== UserType.Default) payload.metadata = payload.meta;
-      await this.update(user, user._id, payload as any);
+      await this.update(user, user._id, {
+        ...payload,
+        emailConfirmed: true
+      });
     }
 
     const userObj = user.toJSON();
