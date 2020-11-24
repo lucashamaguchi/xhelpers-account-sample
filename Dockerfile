@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY ./src/ /app/src/
 
-RUN npm i
+RUN npm ci
 RUN npm audit fix
 RUN npm run build
 
@@ -26,11 +26,9 @@ COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json
 COPY ./tsconfig.json /app/tsconfig.json
 COPY --from=build-env /app/dist /app/dist
+COPY --from=build-env /app/node_modules /app/node_modules
 
 WORKDIR /app
-
-RUN npm ci
-RUN npm audit fix
 
 ENV NODE_ENV=PROD
 ENV HOST=0.0.0.0
