@@ -3,10 +3,9 @@ import * as Joi from "@hapi/joi";
 export const accountCreate = Joi.object({
   name: Joi.string().max(256).required().description("Name"),
   email: Joi.string().email().max(256).required().description("Email"),
-  phone: Joi.string().max(20).required().description("Phone"),
+  phone: Joi.string().max(20).description("Phone"),
   acceptTerms: Joi.boolean()
     .default(true)
-    .required()
     .description("acceptTerms"),
   password: Joi.string().max(50).required().description("Password"),
 })
