@@ -52,7 +52,7 @@ export default class AccountService extends BaseService<IAccount> {
 
     await this.mailmanService.sendEmail(email, "ConfirmEmail", {
       user_name: payload.name,
-      link: `${process.env.FRONT_URL}/confirm-email?token=${token}&email=${payload.email}`,
+      link: `${process.env.FRONT_URL}/confirm-email?token=${token}&email=${encodeURIComponent(payload.email)}`,
     });
 
     return entity;
@@ -108,7 +108,7 @@ export default class AccountService extends BaseService<IAccount> {
 
     await this.mailmanService.sendEmail(user.email, "ForgotPassword", {
       user_name: user.name,
-      link: `${process.env.FRONT_URL}/recuperar-senha?token=${token}&email=${user.email}`,
+      link: `${process.env.FRONT_URL}/recuperar-senha?token=${token}&email=${encodeURIComponent(user.email)}`,
     });
 
     return {
