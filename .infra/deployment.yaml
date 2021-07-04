@@ -29,13 +29,18 @@ spec:
       labels:
         name: $SERVICE_NAME_TAG
     spec:
+      imagePullSecrets:
+      - name: $IMAGE_PULL_SECRET
       containers:
       - name: $SERVICE_NAME
         image: $IMAGE_REPO_URL
         imagePullPolicy: Always
         resources:
           limits:
-            cpu: 100m
+            cpu: 200m
+            memory: 500M
+          requests:
+            cpu: 50m
             memory: 100M
         ports:
         - containerPort: 80
@@ -45,8 +50,8 @@ spec:
             path: /health
             port: 80
             scheme: HTTP
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
         envFrom:
           - secretRef:
               name: $SERVICE_NAME
@@ -74,10 +79,10 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   namespace: $K8S_NAMESPACE
-  name: $SERVICE_NAME_TAG 
+  name: $SERVICE_NAME_TAG
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     cert-manager.io/issue-temporary-certificate: "$CERT_MANAGER_ISSUE_TEMPORARY_CERTICATE"  # temporary cert required for nginx to be able to reload
     acme.cert-manager.io/http01-edit-in-place: "$INGRESS_EDIT_IN_PLACE"  # important to merge with existing ingress resource into a single nginx config file
