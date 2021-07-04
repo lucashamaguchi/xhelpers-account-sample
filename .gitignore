@@ -64,7 +64,3 @@ typings/
 
 # next.js build output
 .next
-
-
-docker
-.vscode

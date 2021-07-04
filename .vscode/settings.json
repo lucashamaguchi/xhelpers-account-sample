@@ -1,0 +1,8 @@
+{
+  "mochaExplorer.files": "src/tests/**/*.ts",
+  "mochaExplorer.require": "ts-node/register",
+	"mochaExplorer.timeout": 999999999,
+	"editor.codeActionsOnSave": {
+	  "source.fixAll.eslint": true
+	},
+}

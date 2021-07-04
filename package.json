@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "export NODE_ENV=DEV && tsc-watch -p tsconfig.json --onSuccess \"node dist/index.js\"",
+    "build-watch": "tsc-watch -p tsconfig.json --onSuccess \"node -e \\\"console.log('Do not close this terminal')\\\" \"",
     "start": "export NODE_ENV=PROD && node dist/index.js",
     "test": "NODE_ENV=TEST tsc -p tsconfig.json && $(npm bin)/mocha -r ts-node/register --exit --no-timeouts --reporter=spec --recursive src/tests/**.spec.ts",
     "lint": "tslint -p tsconfig.json -c tslint.json",
@@ -15,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
@@ -23,7 +24,7 @@
     "reflect-metadata": "^0.1.13",
     "shortid": "^2.2.15",
     "typescript": "^3.8.3",
-    "xhelpers-api": "^2.1.10"
+    "xhelpers-api": "^2.1.19"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.29",

@@ -1,5 +1,5 @@
 # Build
-FROM node:12.16.3-alpine as build-env
+FROM node:14.15.4-alpine as build-env
 
 COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json
@@ -14,7 +14,7 @@ RUN npm audit fix
 RUN npm run build
 
 # Runtime
-FROM node:12.16.3-alpine as runtime
+FROM node:14.15.4-alpine as runtime
 ENV NODE_VERSION 10.16.3
 RUN apk add --no-cache tzdata
 ENV TZ 'America/Sao_Paulo'

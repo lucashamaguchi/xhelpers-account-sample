@@ -56,7 +56,6 @@ describe("🚧  Resource api/user  🚧", () => {
       await db.models[model].createIndexes();
     }
   });
-  // tslint:disable-next-line: no-empty
   afterEach(async () => {});
 
   describe("API api/user", async () => {
