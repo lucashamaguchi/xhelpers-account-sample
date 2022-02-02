@@ -9,14 +9,13 @@
     "build-watch": "tsc-watch -p tsconfig.json --onSuccess \"node -e \\\"console.log('Do not close this terminal')\\\" \"",
     "start": "export NODE_ENV=PROD && node dist/index.js",
     "test": "NODE_ENV=TEST tsc -p tsconfig.json && $(npm bin)/mocha -r ts-node/register --exit --no-timeouts --reporter=spec --recursive src/tests/**.spec.ts",
-    "lint": "tslint -p tsconfig.json -c tslint.json",
     "tsc": "tsc"
   },
   "keywords": [],
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
@@ -43,7 +42,6 @@
     "nodemon": "^2.0.4",
     "ts-loader": "^7.0.4",
     "ts-node": "^8.10.1",
-    "tsc-watch": "^4.2.7",
-    "tslint": "^6.1.2"
+    "tsc-watch": "^4.6.0"
   }
 }
