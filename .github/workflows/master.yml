@@ -42,7 +42,7 @@ jobs:
         aws-secret-access-key: ${{ env.SECRETS_MANAGER_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
         secrets: |
-          /settings/apps/$${{ env.ENV }}/${{ github.repository }}
+          settings/apps/$${{ env.ENV }}/${{ github.repository }}
         parse-json: true
 
     - uses: kciter/aws-ecr-action@master
