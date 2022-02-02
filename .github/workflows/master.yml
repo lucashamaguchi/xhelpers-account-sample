@@ -25,48 +25,58 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Read root secrets from AWS Secrets Manager into environment variables
-      uses: abhilash1in/aws-secrets-manager-action@v1.1.0
+    - name: Install convert-json-env
+      run: |
+        npm install --global convert-json-env
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ env.SECRETS_MANAGER_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ env.SECRETS_MANAGER_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-        secrets: |
-          ${{ env.SECRETS_MANAGER_KEY }}
-        parse-json: true
+
+    - name: Read deploy secrets from AWS Secrets Manager into environment variables
+      run: |
+        aws secretsmanager get-secret-value --secret-id ${{ env.SECRETS_MANAGER_KEY }} --query SecretString --output text > secrets.json
+        convert-json-env secrets.json --out=.env.deploy
+        rm -rf secrets.json
 
     - name: Read project secrets from AWS Secrets Manager into environment variables
-      uses: abhilash1in/aws-secrets-manager-action@v1.1.0
-      with:
-        aws-access-key-id: ${{ env.SECRETS_MANAGER_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ env.SECRETS_MANAGER_AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-        secrets: |
-          settings/apps/${{ env.ENV }}/${{ github.repository }}
-        parse-json: true
+      run: |
+        aws secretsmanager get-secret-value --secret-id /settings/apps/$${{ env.ENV }}/${{ github.repository }} --query SecretString --output text > secrets.json
+        convert-json-env secrets.json --out=.env.project
+        rm -rf secrets.json
+
+    - name: import to env
+      run: |
+        cat .env.deploy >> $GITHUB_ENV;
+        cat .env.project >> $GITHUB_ENV;
+        rm -rf .env.deploy
+        rm -rf .env.project
 
     - uses: kciter/aws-ecr-action@master
       with:
-        access_key_id: ${{ env.SETTINGS_DEPLOY_PRD_AWS_ACCESS_KEY_ID }}
-        secret_access_key: ${{ env.SETTINGS_DEPLOY_PRD_AWS_SECRET_ACCESS_KEY }}
-        account_id: ${{ env.SETTINGS_DEPLOY_PRD_AWS_ACCOUNT_ID }}
-        repo: ${{ env.SETTINGS_APPS_PRD_ECR_REPOSITORY_NAME }}
-        region: ${{ env.SETTINGS_DEPLOY_PRD_ECR_REGION }}
-        tags: latest-${{ env.SETTINGS_DEPLOY_PRD_ENV }},${{ github.sha }}
+        access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+        secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        account_id: ${{ env.AWS_ACCOUNT_ID }}
+        repo: ${{ env.ECR_REPOSITORY_NAME }}
+        region: ${{ env.ECR_REGION }}
+        tags: latest-${{ env.ENV }},${{ github.sha }}
         create_repo: true
 
     - name: "set service url"
       run: |
-        if [ ${SETTINGS_DEPLOY_PRD_ENV} == "prd" ]
+        if [ ${ENV} == "prd" ]
         then
-          export SERVICE_URL="${SETTINGS_APPS_PRD_SERVICE_URL}"
+          export SERVICE_URL="${SERVICE_URL}"
         else
-          export SERVICE_URL="${SETTINGS_DEPLOY_PRD_ENV}.${SETTINGS_APPS_PRD_SERVICE_URL}"
+          export SERVICE_URL="${ENV}.${SERVICE_URL}"
         fi
 
     - name: "get cluster ip"
       env:
-        CLUSTER_SERVER: ${{ fromJSON(env.SETTINGS_DEPLOY_PRD_KUBE_CONFIG).clusters[0].cluster.server }}
+        CLUSTER_SERVER: ${{ fromJSON(env.KUBE_CONFIG).clusters[0].cluster.server }}
       run: |
         export CLUSTER_IP=$(echo $CLUSTER_SERVER | cut -d'/' -f 3 | cut -d':' -f 1)
         echo "CLUSTER_IP=${CLUSTER_IP}" >> $GITHUB_ENV
@@ -75,9 +85,9 @@ jobs:
     - name: "Create an A record set"
       uses: Roosterfish/aws-route53-record-set-action@master
       with:
-        aws_access_key_id: ${{ env.SETTINGS_DEPLOY_PRD_AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ env.SETTINGS_DEPLOY_PRD_AWS_SECRET_ACCESS_KEY }}
-        aws_route53_hosted_zone_id: ${{ env.SETTINGS_DEPLOY_PRD_AWS_HOSTED_ZONE_ID }}
+        aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws_route53_hosted_zone_id: ${{ env.AWS_HOSTED_ZONE_ID }}
         aws_route53_rr_action: "UPSERT"
         aws_route53_rr_name: ${{ env.SERVICE_URL }}
         aws_route53_rr_type: "A"
