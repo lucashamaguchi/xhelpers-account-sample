@@ -133,7 +133,7 @@ jobs:
 
     - name: Prepare env
       run: |
-        export IMAGE_REPO_URL=${AWS_ACCOUNT_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}:${{ github.sha }}
+        export IMAGE_REPO_URL=${DEPLOY_AWS_ACCOUNT_ID}.dkr.ecr.${DEPLOY_ECR_REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}:${{ github.sha }}
         export CERT_MANAGER_ISSUE_TEMPORARY_CERTICATE="false"
         export INGRESS_EDIT_IN_PLACE="false"
         echo "IMAGE_REPO_URL=${IMAGE_REPO_URL}" >> $GITHUB_ENV
@@ -153,6 +153,8 @@ jobs:
       run: |
         kubectl create secret generic $SERVICE_NAME \
           --from-env-file=.env.project \
+          --save-config \
+          --dry-run=client \
           --namespace $K8S_NAMESPACE \
           -o yaml | kubectl apply -f -
 
