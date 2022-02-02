@@ -33,7 +33,7 @@ jobs:
         aws-region: us-east-1
         secrets: |
           ${{ env.SECRETS_MANAGER_KEY }}
-        parse-json: false
+        parse-json: true
 
     - name: Read project secrets from AWS Secrets Manager into environment variables
       uses: abhilash1in/aws-secrets-manager-action@v1.1.0
@@ -42,7 +42,7 @@ jobs:
         aws-secret-access-key: ${{ env.SECRETS_MANAGER_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
         secrets: |
-          settings/apps/$${{ env.ENV }}/${{ github.repository }}
+          settings/apps/${{ env.ENV }}/${{ github.repository }}
         parse-json: true
 
     - uses: kciter/aws-ecr-action@master
