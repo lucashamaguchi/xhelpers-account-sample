@@ -123,7 +123,7 @@ jobs:
         rm -rf secrets.json
 
         sed "s/[']//g" .env.project.temp > .env.project
-        .env.project >> $GITHUB_ENV
+        cat .env.project >> $GITHUB_ENV
 
     - name: Read project secrets from AWS Secrets Manager into environment variables
       run: |
@@ -132,7 +132,7 @@ jobs:
         rm -rf secrets.json
 
         sed "s/[']//g" .env.base.temp > .env.base
-        .env.base >> .env.project
+        cat .env.base >> .env.project
 
     - name: Config kubernetes
       uses: Azure/k8s-set-context@v1
