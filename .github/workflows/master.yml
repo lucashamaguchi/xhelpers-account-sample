@@ -95,8 +95,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install Doppler CLI
-      uses: dopplerhq/cli-action@v1
 
     - name: Install convert-json-env
       run: |
@@ -121,10 +119,20 @@ jobs:
     - name: Read project secrets from AWS Secrets Manager into environment variables
       run: |
         aws secretsmanager get-secret-value --secret-id /settings/apps/${{ env.ENV }}/${{ github.repository }} --query SecretString --output text > secrets.json
-        convert-json-env secrets.json --out=.env.project
+        convert-json-env secrets.json --out=.env.project.temp
         rm -rf secrets.json
 
-        sed "s/[']//g" .env.project >> $GITHUB_ENV
+        sed "s/[']//g" .env.project.temp > .env.project
+        .env.project >> $GITHUB_ENV
+
+    - name: Read project secrets from AWS Secrets Manager into environment variables
+      run: |
+        aws secretsmanager get-secret-value --secret-id /settings/apps/${{ env.ENV }}/base --query SecretString --output text > secrets.json
+        convert-json-env secrets.json --out=.env.base.temp
+        rm -rf secrets.json
+
+        sed "s/[']//g" .env.base.temp > .env.base
+        .env.base >> .env.project
 
     - name: Config kubernetes
       uses: Azure/k8s-set-context@v1
