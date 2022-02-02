@@ -33,7 +33,7 @@ jobs:
         aws-region: us-east-1
         secrets: |
           ${{ env.SECRETS_MANAGER_KEY }}
-        parse-json: true
+        parse-json: false
 
     - name: Read project secrets from AWS Secrets Manager into environment variables
       uses: abhilash1in/aws-secrets-manager-action@v1.1.0
@@ -47,26 +47,26 @@ jobs:
 
     - uses: kciter/aws-ecr-action@master
       with:
-        access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-        secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        account_id: ${{ env.AWS_ACCOUNT_ID }}
-        repo: ${{ env.ECR_REPOSITORY_NAME }}
-        region: ${{ env.ECR_REGION }}
-        tags: latest-${{ env.ENV }},${{ github.sha }}
+        access_key_id: ${{ env._SETTINGS_DEPLOY_PRD_AWS_ACCESS_KEY_ID }}
+        secret_access_key: ${{ env._SETTINGS_DEPLOY_PRD_AWS_SECRET_ACCESS_KEY }}
+        account_id: ${{ env._SETTINGS_DEPLOY_PRD_AWS_ACCOUNT_ID }}
+        repo: ${{ env._SETTINGS_APPS_PRD_ECR_REPOSITORY_NAME }}
+        region: ${{ env._SETTINGS_DEPLOY_PRD_ECR_REGION }}
+        tags: latest-${{ env._SETTINGS_DEPLOY_PRD_ENV }},${{ github.sha }}
         create_repo: true
 
     - name: "set service url"
       run: |
-        if [ ${ENV} == "prd" ]
+        if [ ${_SETTINGS_DEPLOY_PRD_ENV} == "prd" ]
         then
-          export SERVICE_URL="${SERVICE_URL}"
+          export SERVICE_URL="${_SETTINGS_APPS_PRD_SERVICE_URL}"
         else
-          export SERVICE_URL="${ENV}.${SERVICE_URL}"
+          export SERVICE_URL="${_SETTINGS_DEPLOY_PRD_ENV}.${_SETTINGS_APPS_PRD_SERVICE_URL}"
         fi
 
     - name: "get cluster ip"
       env:
-        CLUSTER_SERVER: ${{ fromJSON(env.KUBE_CONFIG).clusters[0].cluster.server }}
+        CLUSTER_SERVER: ${{ fromJSON(env._SETTINGS_DEPLOY_PRD_KUBE_CONFIG).clusters[0].cluster.server }}
       run: |
         export CLUSTER_IP=$(echo $CLUSTER_SERVER | cut -d'/' -f 3 | cut -d':' -f 1)
         echo "CLUSTER_IP=${CLUSTER_IP}" >> $GITHUB_ENV
@@ -75,9 +75,9 @@ jobs:
     - name: "Create an A record set"
       uses: Roosterfish/aws-route53-record-set-action@master
       with:
-        aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        aws_route53_hosted_zone_id: ${{ env.AWS_HOSTED_ZONE_ID }}
+        aws_access_key_id: ${{ env._SETTINGS_DEPLOY_PRD_AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ env._SETTINGS_DEPLOY_PRD_AWS_SECRET_ACCESS_KEY }}
+        aws_route53_hosted_zone_id: ${{ env._SETTINGS_DEPLOY_PRD_AWS_HOSTED_ZONE_ID }}
         aws_route53_rr_action: "UPSERT"
         aws_route53_rr_name: ${{ env.SERVICE_URL }}
         aws_route53_rr_type: "A"
