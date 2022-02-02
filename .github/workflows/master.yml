@@ -42,6 +42,7 @@ jobs:
         convert-json-env secrets.json --out=.env.deploy
         rm -rf secrets.json
 
+        sed "s/[']//g" .env.deploy > .env.deploy
         cat .env.deploy >> $GITHUB_ENV;
         rm -rf .env.deploy
 
@@ -51,6 +52,7 @@ jobs:
         convert-json-env secrets.json --out=.env.project
         rm -rf secrets.json
 
+        sed "s/[']//g" .env.project > .env.project
         cat .env.project >> $GITHUB_ENV;
         rm -rf .env.project
 
