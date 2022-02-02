@@ -56,11 +56,11 @@ jobs:
 
     - uses: kciter/aws-ecr-action@master
       with:
-        access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-        secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        account_id: ${{ env.AWS_ACCOUNT_ID }}
+        access_key_id: ${{ env.DEPLOY_AWS_ACCESS_KEY_ID }}
+        secret_access_key: ${{ env.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+        account_id: ${{ env.DEPLOY_AWS_ACCOUNT_ID }}
         repo: ${{ env.ECR_REPOSITORY_NAME }}
-        region: ${{ env.ECR_REGION }}
+        region: ${{ env.DEPLOY_ECR_REGION }}
         tags: latest-${{ env.ENV }},${{ github.sha }}
         create_repo: true
 
@@ -84,9 +84,9 @@ jobs:
     - name: "Create an A record set"
       uses: Roosterfish/aws-route53-record-set-action@master
       with:
-        aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        aws_route53_hosted_zone_id: ${{ env.AWS_HOSTED_ZONE_ID }}
+        aws_access_key_id: ${{ env.DEPLOY_AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ env.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+        aws_route53_hosted_zone_id: ${{ env.DEPLOY_AWS_HOSTED_ZONE_ID }}
         aws_route53_rr_action: "UPSERT"
         aws_route53_rr_name: ${{ env.SERVICE_URL }}
         aws_route53_rr_type: "A"
