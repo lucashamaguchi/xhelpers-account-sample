@@ -96,5 +96,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: $SERVICE_NAME
-          servicePort: 80
+          service:
+            name: $SERVICE_NAME
+            port:
+              number: 80
