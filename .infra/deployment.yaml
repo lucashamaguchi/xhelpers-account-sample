@@ -95,7 +95,9 @@ spec:
   - host: $SERVICE_URL
     http:
       paths:
-      - backend:
+      - pathType: Prefix
+        path: "/"
+        backend:
           service:
             name: $SERVICE_NAME
             port:
