@@ -42,8 +42,7 @@ jobs:
         convert-json-env secrets.json --out=.env.deploy
         rm -rf secrets.json
 
-        sed "s/[']//g" .env.deploy > .env.deploy
-        cat .env.deploy >> $GITHUB_ENV;
+        sed "s/[']//g" .env.deploy >> $GITHUB_ENV
         rm -rf .env.deploy
 
     - name: Read project secrets from AWS Secrets Manager into environment variables
@@ -52,8 +51,7 @@ jobs:
         convert-json-env secrets.json --out=.env.project
         rm -rf secrets.json
 
-        sed "s/[']//g" .env.project > .env.project
-        cat .env.project >> $GITHUB_ENV;
+        sed "s/[']//g" .env.project >> $GITHUB_ENV
         rm -rf .env.project
 
     - uses: kciter/aws-ecr-action@master
